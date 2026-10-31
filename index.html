@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHIVAM PPTX | Presentation Downloader</title>
+
+  <!-- Web Favicon (Root me rakha icon.png yahan lagega) -->
+  <link rel="icon" type="image/png" href="./icon.png" />
+  <link rel="apple-touch-icon" href="./icon.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- JSZip to read real PPTX slide 1 directly from your GitHub repo -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #1e1b4b, #0f172a 50%, #020617 100%);
+      min-height: 100vh;
+      color: #f8fafc;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(250, 204, 21, 0.55);
+      box-shadow: 0 20px 40px -15px rgba(250, 204, 21, 0.2);
+    }
+
+    .slide-preview {
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto mb-8">
+    <div class="glass rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <!-- Website Logo (Loads ./icon.png from root) -->
+        <div class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-yellow-500/20 border border-yellow-400/40 bg-[#0d1527] shrink-0">
+          <img
+            src="./icon.png"
+            alt="SHIVAM PPTX Logo"
+            class="w-full h-full object-cover"
+            onerror="this.outerHTML = `<svg viewBox='0 0 100 100' class='w-full h-full'><rect x='6' y='6' width='88' height='88' rx='20' fill='#ffffff' stroke='#facc15' stroke-width='6'/><circle cx='50' cy='50' r='32' fill='#0f172a' stroke='#facc15' stroke-width='4'/><polygon points='50,34 32,66 68,66' fill='#facc15'/><circle cx='50' cy='31' r='6' fill='#00b4d8'/></svg>`"
+          />
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-yellow-200 to-amber-400 bg-clip-text text-transparent">
+            SHIVAM PPTX
+          </h1>
+          <p class="text-xs text-slate-400">GitHub Root PPTX Live First-Page Preview & Downloader</p>
+        </div>
+      </div>
+
+      <div id="repoBadge" class="text-xs px-3 py-1.5 rounded-xl glass text-indigo-300 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="syncStatus">Syncing root PPTX files...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search Bar -->
+  <section class="max-w-3xl mx-auto mb-10 text-center">
+    <div class="relative">
+      <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search PPTX file (e.g. sst6.pptx)..."
+        class="w-full glass rounded-2xl pl-12 pr-28 py-4 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-yellow-400 transition text-base shadow-xl"
+      />
+      <button
+        id="clearBtn"
+        class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition"
+      >
+        Clear
+      </button>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs text-slate-400">
+      <span>Quick Search:</span>
+      <button onclick="quickSearch('sst6.pptx')" class="px-3 py-1 rounded-lg glass hover:border-yellow-400 text-yellow-300 font-mono transition">
+        sst6.pptx
+      </button>
+      <button onclick="quickSearch('')" class="px-3 py-1 rounded-lg glass hover:border-yellow-400 text-slate-300 transition">
+        Show All
+      </button>
+    </div>
+  </section>
+
+  <!-- PPT Cards Grid -->
+  <main class="max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-4 px-1">
+      <span id="resultCount" class="text-sm text-slate-400 font-medium">Loading presentations...</span>
+    </div>
+
+    <div id="pptGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden glass rounded-2xl p-12 text-center max-w-md mx-auto my-8">
+      <i data-lucide="file-x" class="w-12 h-12 text-yellow-400 mx-auto mb-3"></i>
+      <h3 class="text-lg font-semibold text-white mb-1">PPTX Not Found</h3>
+      <p class="text-sm text-slate-400">
+        Make sure <span class="text-yellow-400 font-mono">sst6.pptx</span> is uploaded to the root of your repository.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    // Root PPTX Files List (sst6.pptx default + GitHub auto-discovery)
+    const ROOT_PPTX_FILES = [
+      'sst6.pptx'
+    ];
+
+    const pptList = [];
+    const pptGrid = document.getElementById('pptGrid');
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const emptyState = document.getElementById('emptyState');
+    const resultCount = document.getElementById('resultCount');
+    const syncStatus = document.getElementById('syncStatus');
+
+    // Auto-detect extra .pptx files if hosted on GitHub Pages (*.github.io)
+    async function discoverGitHubRootPptx() {
+      const host = window.location.hostname;
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+
+      if (host.endsWith('github.io') && pathParts.length >= 1) {
+        const username = host.split('.')[0];
+        const repo = pathParts[0];
+        try {
+          const res = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/`);
+          if (res.ok) {
+            const contents = await res.json();
+            contents.forEach(item => {
+              if (item.type === 'file' && item.name.toLowerCase().endsWith('.pptx')) {
+                if (!ROOT_PPTX_FILES.includes(item.name)) {
+                  ROOT_PPTX_FILES.push(item.name);
+                }
+              }
+            });
+          }
+        } catch (err) {
+          console.log('GitHub API discovery skipped, using default file list.');
+        }
+      }
+    }
+
+    // Fetch each .pptx file from the repo root & extract real First Page (Slide 1)
+    async function loadRootPresentations() {
+      await discoverGitHubRootPptx();
+
+      for (const filename of ROOT_PPTX_FILES) {
+        let title = filename.replace(/\.[^/.]+$/, '').toUpperCase();
+        let subtitle = 'Slide 1 Ready • Click Download to save PPTX';
+        let sizeText = 'Root File';
+        let thumbnailImage = null;
+        let fileFound = false;
+
+        try {
+          const response = await fetch(`./${filename}`);
+          if (response.ok) {
+            fileFound = true;
+            const blob = await response.blob();
+            sizeText = (blob.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+            const zip = await JSZip.loadAsync(blob);
+
+            // Check if PPTX has an embedded thumbnail image
+            const thumbFile = zip.file('docProps/thumbnail.jpeg') || zip.file('docProps/thumbnail.png');
+            if (thumbFile) {
+              const thumbBlob = await thumbFile.async('blob');
+              thumbnailImage = URL.createObjectURL(thumbBlob);
+            }
+
+            // Extract actual text from Slide 1 (ppt/slides/slide1.xml)
+            const slide1 = zip.file('ppt/slides/slide1.xml');
+            if (slide1) {
+              const xmlStr = await slide1.async('string');
+              const texts = [...xmlStr.matchAll(/<a:t>([^<]+)<\/a:t>/g)]
+                .map(m => m[1].trim())
+                .filter(Boolean);
+
+              if (texts.length > 0) {
+                title = texts[0];
+                subtitle = texts.slice(1, 6).join(' • ') || 'First Slide Content Loaded';
+              }
+            }
+          }
+        } catch (e) {
+          console.warn(`Could not fetch ${filename} live yet:`, e);
+        }
+
+        pptList.push({
+          filename,
+          title,
+          subtitle,
+          size: sizeText,
+          fileUrl: `./${filename}`,
+          thumbnailImage,
+          fileFound,
+          theme: ['#4f46e5', '#7c3aed']
+        });
+      }
+
+      syncStatus.textContent = `${pptList.length} Root PPTX Ready`;
+      renderCards(searchInput.value);
+    }
+
+    // Draw Slide 1 Preview on Canvas
+    function generateFirstPageCanvas(item) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 640, 360);
+      grad.addColorStop(0, item.theme[0]);
+      grad.addColorStop(1, item.theme[1]);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 640, 360);
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+      ctx.fillRect(30, 30, 580, 300);
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.fillText(`FIRST PAGE (SLIDE 1) • ${item.filename.toUpperCase()}`, 54, 70);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(54, 84, 80, 4);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px Inter, sans-serif';
+      wrapText(ctx, item.title, 54, 135, 530, 36);
+
+      ctx.fillStyle = 'rgba(241, 245, 249, 0.88)';
+      ctx.font = '16px Inter, sans-serif';
+      wrapText(ctx, item.subtitle, 54, 215, 530, 24);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText('SHIVAM PPTX • Live Slide 1 Preview', 54, 305);
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      let lines = 0;
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+          ctx.fillText(line, x, y);
+          line = words[i] + ' ';
+          y += lineHeight;
+          lines++;
+          if (lines >= 2) break;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
+
+    // Render Cards
+    function renderCards(filterText = '') {
+      const query = filterText.trim().toLowerCase();
+      pptGrid.innerHTML = '';
+
+      const filtered = pptList.filter(item =>
+        item.filename.toLowerCase().includes(query) ||
+        item.title.toLowerCase().includes(query) ||
+        item.subtitle.toLowerCase().includes(query)
+      );
+
+      resultCount.textContent = `Showing ${filtered.length} presentation${filtered.length === 1 ? '' : 's'}`;
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      filtered.forEach(item => {
+        const previewSrc = item.thumbnailImage || generateFirstPageCanvas(item);
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl overflow-hidden flex flex-col justify-between';
+
+        card.innerHTML = `
+          <div>
+            <!-- First Page Preview -->
+            <div class="slide-preview bg-slate-900 relative">
+              <img src="${previewSrc}" alt="${item.filename} Slide 1" class="w-full h-full object-cover" />
+              <div class="absolute top-3 left-3 bg-black/65 backdrop-blur-md text-[11px] font-semibold px-2.5 py-1 rounded-md text-yellow-300 border border-white/10">
+                SLIDE 1 PREVIEW
+              </div>
+              <div class="absolute bottom-3 right-3 bg-black/75 text-[11px] px-2.5 py-0.5 rounded text-slate-200 font-mono">
+                ${item.size}
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="p-5">
+              <div class="flex items-center justify-between text-xs font-mono text-indigo-400 mb-1.5">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                  ${item.filename}
+                </span>
+                <span class="text-[11px] ${item.fileFound ? 'text-emerald-400' : 'text-amber-400'}">
+                  ${item.fileFound ? '● Live in Repo' : '● Ready'}
+                </span>
+              </div>
+              <h2 class="text-lg font-bold text-white leading-snug mb-1">${item.title}</h2>
+              <p class="text-xs text-slate-400 line-clamp-2">${item.subtitle}</p>
+            </div>
+          </div>
+
+          <!-- Direct Repo Root Download Link -->
+          <div class="px-5 pb-5 pt-2">
+            <a
+              href="${item.fileUrl}"
+              download="${item.filename}"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition active:scale-95"
+            >
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Download ${item.filename}</span>
+            </a>
+          </div>
+        `;
+
+        pptGrid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Search Listeners
+    searchInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      clearBtn.classList.toggle('hidden', val.length === 0);
+      renderCards(val);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      renderCards('');
+    });
+
+    function quickSearch(term) {
+      searchInput.value = term;
+      clearBtn.classList.toggle('hidden', term.length === 0);
+      renderCards(term);
+    }
+
+    lucide.createIcons();
+    loadRootPresentations();
+  </script>
+</body>
+</html>
