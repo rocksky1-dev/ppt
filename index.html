@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SHIVAM PPTX | Presentation Hub</title>
+  <title>SHIVAM PPTX | Premium Presentation Hub</title>
 
-  <!-- Favicon Logo from Root -->
+  <!-- Favicon Logo -->
   <link rel="icon" type="image/png" href="./icon.png" />
   <link rel="apple-touch-icon" href="./icon.png" />
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- JSZip for parsing PPTX slide 1 -->
+  <!-- JSZip for reading PPTX Slide 1 XML -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -21,63 +21,65 @@
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #060913;
+      background: #030712;
       background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(234, 179, 8, 0.1) 0px, transparent 50%);
+        radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.08) 0%, transparent 40%);
       min-height: 100vh;
-      color: #f8fafc;
-      overflow-x: hidden;
+      color: #f3f4f6;
     }
 
-    /* Glassmorphism Effects */
-    .glass {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+    /* Premium Glassmorphism */
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.07);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .glass-card:hover {
-      transform: translateY(-8px) scale(1.01);
+      transform: translateY(-6px);
       border-color: rgba(234, 179, 8, 0.4);
-      box-shadow: 0 25px 50px -12px rgba(234, 179, 8, 0.15);
+      box-shadow: 0 20px 40px -15px rgba(234, 179, 8, 0.15);
     }
 
-    /* Shimmer Animation for Fast Loading State */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    .shimmer {
-      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    /* Smooth Slide Aspect Ratio */
-    .slide-box {
+    /* Slide Aspect Ratio Container */
+    .slide-preview-box {
       aspect-ratio: 16 / 9;
       position: relative;
       overflow: hidden;
+      background: #0f172a;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
     }
   </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-10">
 
-  <!-- Header Section -->
+  <!-- Header -->
   <header class="max-w-6xl mx-auto mb-10">
-    <div class="glass rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
+    <div class="glass-nav rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-yellow-500/20 border border-yellow-400/30 bg-[#0b1326] shrink-0 transition hover:rotate-6">
+        <div class="w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg border border-yellow-400/30 bg-[#0b1326] shrink-0">
           <img
             src="./icon.png"
             alt="Logo"
@@ -89,210 +91,185 @@
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-yellow-100 to-amber-400 bg-clip-text text-transparent">
             SHIVAM PPTX
           </h1>
-          <p class="text-xs sm:text-sm text-slate-400 font-medium">Instant Root PPTX Scanner & Slide 1 Viewer</p>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">Lightning-Fast Slide 1 Preview & Downloader</p>
         </div>
       </div>
 
-      <!-- Live Sync Status Badge -->
-      <div class="glass px-4 py-2 rounded-2xl text-xs text-yellow-300 font-medium flex items-center gap-2.5 shadow-inner">
+      <!-- Status Pill -->
+      <div class="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-2xl text-xs text-yellow-400 font-medium flex items-center gap-2.5">
         <span class="relative flex h-2.5 w-2.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
         </span>
-        <span id="syncText">Scanning repo files...</span>
+        <span id="syncStatus">Syncing Presentations...</span>
       </div>
     </div>
   </header>
 
-  <!-- Search & Quick Filters -->
+  <!-- Search Bar -->
   <section class="max-w-3xl mx-auto mb-10 text-center">
-    <div class="relative group">
-      <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-indigo-600 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-      <div class="relative">
-        <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-5 top-1/2 -translate-y-1/2"></i>
-        <input
-          id="searchInput"
-          type="text"
-          placeholder="Search any presentation (e.g. sst6.pptx)..."
-          class="w-full glass rounded-3xl pl-13 pr-28 py-4 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition text-sm sm:text-base shadow-2xl"
-        />
-        <button
-          id="clearBtn"
-          class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl transition font-medium"
-        >
-          Clear
-        </button>
-      </div>
+    <div class="relative">
+      <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-5 top-1/2 -translate-y-1/2"></i>
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search any presentation name (e.g. sst6.pptx)..."
+        class="w-full glass-nav rounded-2xl pl-13 pr-28 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-400/60 transition text-sm sm:text-base shadow-xl"
+      />
+      <button
+        id="clearBtn"
+        class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl transition font-medium"
+      >
+        Clear
+      </button>
     </div>
   </section>
 
-  <!-- Main Grid Section -->
+  <!-- Grid Content -->
   <main class="max-w-6xl mx-auto">
-    <div class="flex items-center justify-between mb-5 px-2">
-      <span id="resultCount" class="text-sm text-slate-400 font-semibold tracking-wide uppercase text-xs">Loading library...</span>
+    <div class="flex items-center justify-between mb-5 px-1">
+      <span id="resultCount" class="text-xs font-bold uppercase tracking-wider text-slate-400">Loading Library...</span>
     </div>
 
-    <!-- PPT Cards Grid -->
+    <!-- Presentation Cards Grid -->
     <div id="pptGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Skeleton Loaders for 4-5 KB speed feedback -->
-      <div class="glass-card rounded-3xl overflow-hidden shimmer h-80"></div>
-      <div class="glass-card rounded-3xl overflow-hidden shimmer h-80"></div>
-      <div class="glass-card rounded-3xl overflow-hidden shimmer h-80"></div>
+      <!-- Injected via JavaScript -->
     </div>
 
     <!-- Empty State -->
-    <div id="emptyState" class="hidden glass rounded-3xl p-12 text-center max-w-md mx-auto my-12 shadow-2xl">
+    <div id="emptyState" class="hidden glass-card rounded-3xl p-12 text-center max-w-md mx-auto my-12 shadow-2xl">
       <div class="w-16 h-16 rounded-2xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center mx-auto mb-4 border border-yellow-500/20">
-        <i data-lucide="folder-search" class="w-8 h-8"></i>
+        <i data-lucide="file-question" class="w-8 h-8"></i>
       </div>
-      <h3 class="text-lg font-bold text-white mb-2">No Presentations Found</h3>
+      <h3 class="text-lg font-bold text-white mb-2">Presentation Not Found</h3>
       <p class="text-sm text-slate-400">
-        Make sure your `.pptx` files are placed directly in the **root directory** of your GitHub repository.
+        Check if the file name is correctly listed in the script configuration.
       </p>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="max-w-6xl mx-auto mt-20 text-center text-xs text-slate-500 pb-8">
-    <p>SHIVAM PPTX Engine • Built for Lightning-Fast Performance</p>
-  </footer>
-
   <script>
-    let allPresentations = [];
+    // =========================================================================
+    // ⚠️ APNE SAARE .pptx FILES KE NAAM YAHAN LIST KAR DE
+    // Jitni bhi files tu GitHub repo ke root me daalega, unka naam yahan likh dena!
+    // =========================================================================
+    const MY_PPT_FILES = [
+      'sst6.pptx',
+      // 'chapter2.pptx',  <- Jaise-jaise nayi file dale, yahan add karte jana
+      // 'science_notes.pptx'
+    ];
+
+    let presentationData = [];
 
     const pptGrid = document.getElementById('pptGrid');
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearBtn');
     const emptyState = document.getElementById('emptyState');
     const resultCount = document.getElementById('resultCount');
-    const syncText = document.getElementById('syncText');
+    const syncStatus = document.getElementById('syncStatus');
 
-    // Automatically Discover all .pptx files from GitHub Repository Root
-    async function scanRepoRoot() {
-      let filesToLoad = ['sst6.pptx']; // Default fallback file
-
-      const host = window.location.hostname;
-      const pathParts = window.location.pathname.split('/').filter(Boolean);
-
-      // If hosted on GitHub Pages, query GitHub REST API to auto-detect every .pptx in root instantly
-      if (host.endsWith('github.io') && pathParts.length >= 1) {
-        const user = host.split('.')[0];
-        const repo = pathParts[0];
-        try {
-          const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/`);
-          if (res.ok) {
-            const items = await res.json();
-            const repoPptxs = items
-              .filter(i => i.type === 'file' && i.name.toLowerCase().endsWith('.pptx'))
-              .map(i => i.name);
-            
-            if (repoPptxs.length > 0) {
-              filesToLoad = repoPptxs;
-            }
-          }
-        } catch (err) {
-          console.warn('API fetch restricted, using standard root scanner.');
-        }
-      }
-
-      loadPresentations(filesToLoad);
-    }
-
-    // Process each PPTX file and extract Slide 1 text & thumbnail asynchronously
-    async function loadPresentations(filenames) {
-      allPresentations = [];
+    // Load all listed presentations and read Slide 1 XML content
+    async function initSync() {
+      presentationData = [];
       pptGrid.innerHTML = '';
 
-      for (const filename of filenames) {
+      for (const filename of MY_PPT_FILES) {
         let title = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').toUpperCase();
-        let subtitle = 'Slide 1 Ready • Tap download to save file';
+        let subtitle = 'Slide 1 Loaded • Ready for Download';
         let fileSize = 'Root File';
-        let thumbUrl = null;
-        let isLoaded = false;
+        let thumbnailBlobUrl = null;
+        let isSuccess = false;
 
         try {
-          const res = await fetch(`./${filename}`);
-          if (res.ok) {
-            isLoaded = true;
-            const blob = await res.blob();
+          const response = await fetch(`./${filename}`);
+          if (response.ok) {
+            isSuccess = true;
+            const blob = await response.blob();
             fileSize = (blob.size / (1024 * 1024)).toFixed(2) + ' MB';
 
-            // Unzip presentation to extract Slide 1 content & embedded cover image
+            // Unzip to read First Page (Slide 1)
             const zip = await JSZip.loadAsync(blob);
             
-            const thumbFile = zip.file('docProps/thumbnail.jpeg') || zip.file('docProps/thumbnail.png');
-            if (thumbFile) {
-              const thumbBlob = await thumbFile.async('blob');
-              thumbUrl = URL.createObjectURL(thumbBlob);
+            // Check embedded thumbnail image
+            const thumb = zip.file('docProps/thumbnail.jpeg') || zip.file('docProps/thumbnail.png');
+            if (thumb) {
+              const tBlob = await thumb.async('blob');
+              thumbnailBlobUrl = URL.createObjectURL(tBlob);
             }
 
+            // Extract text from slide1.xml
             const slide1 = zip.file('ppt/slides/slide1.xml');
             if (slide1) {
               const xmlText = await slide1.async('string');
-              const extractedWords = [...xmlText.matchAll(/<a:t>([^<]+)<\/a:t>/g)]
+              const words = [...xmlText.matchAll(/<a:t>([^<]+)<\/a:t>/g)]
                 .map(m => m[1].trim())
                 .filter(Boolean);
 
-              if (extractedWords.length > 0) {
-                title = extractedWords[0];
-                subtitle = extractedWords.slice(1, 5).join(' • ') || 'First Slide Overview';
+              if (words.length > 0) {
+                title = words[0];
+                subtitle = words.slice(1, 5).join(' • ') || 'First Page Content Extracted';
               }
             }
           }
-        } catch (e) {
-          console.warn(`Error loading ${filename}:`, e);
+        } catch (err) {
+          console.warn(`Could not load ${filename}:`, err);
         }
 
-        allPresentations.push({
+        presentationData.push({
           filename,
           title,
           subtitle,
           fileSize,
-          thumbUrl,
-          isLoaded,
-          fileUrl: `./${filename}`,
-          theme: ['#4f46e5', '#7c3aed']
+          thumbnailBlobUrl,
+          isSuccess,
+          fileUrl: `./${filename}`
         });
       }
 
-      syncText.textContent = `${allPresentations.length} PPTX Synced`;
+      syncStatus.textContent = `${presentationData.filter(p => p.isSuccess).length}/${MY_PPT_FILES.length} Synced Successfully`;
       renderCards(searchInput.value);
     }
 
-    // Generate dynamic crisp 16:9 canvas thumbnail if no embedded thumbnail exists
-    function generateCanvasThumbnail(item) {
+    // Canvas fallback generator for First Page Preview
+    function generateCanvasPreview(item) {
       const canvas = document.createElement('canvas');
       canvas.width = 640;
       canvas.height = 360;
       const ctx = canvas.getContext('2d');
 
+      // Gradient background
       const grad = ctx.createLinearGradient(0, 0, 640, 360);
-      grad.addColorStop(0, item.theme[0]);
-      grad.addColorStop(1, item.theme[1]);
+      grad.addColorStop(0, '#312e81');
+      grad.addColorStop(1, '#1e1b4b');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 640, 360);
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-      ctx.fillRect(35, 35, 570, 290);
+      // Card container inside preview
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
+      ctx.fillRect(30, 30, 580, 300);
 
-      ctx.fillStyle = '#fde047';
+      // Top Tag
+      ctx.fillStyle = '#facc15';
       ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText(`SLIDE 1 PREVIEW • ${item.filename.toUpperCase()}`, 55, 70);
+      ctx.fillText(`FIRST PAGE (SLIDE 1) • ${item.filename.toUpperCase()}`, 54, 70);
 
       ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(55, 84, 60, 4);
+      ctx.fillRect(54, 84, 70, 4);
 
+      // Title
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
-      wrapText(ctx, item.title, 55, 135, 510, 34);
+      wrapText(ctx, item.title, 54, 135, 520, 36);
 
-      ctx.fillStyle = 'rgba(241, 245, 249, 0.85)';
+      // Subtitle
+      ctx.fillStyle = '#94a3b8';
       ctx.font = '15px "Plus Jakarta Sans", sans-serif';
-      wrapText(ctx, item.subtitle, 55, 210, 510, 22);
+      wrapText(ctx, item.subtitle, 54, 215, 520, 24);
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      // Footer brand
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.font = '11px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText('SHIVAM PPTX Hub', 55, 295);
+      ctx.fillText('SHIVAM PPTX Hub', 54, 300);
 
       return canvas.toDataURL('image/png');
     }
@@ -316,18 +293,18 @@
       ctx.fillText(line, x, y);
     }
 
-    // Render Presentation Cards with smooth layout
-    function renderCards(filter = '') {
-      const query = filter.trim().toLowerCase();
+    // Render Cards in DOM
+    function renderCards(filterText = '') {
+      const query = filterText.trim().toLowerCase();
       pptGrid.innerHTML = '';
 
-      const filtered = allPresentations.filter(item =>
+      const filtered = presentationData.filter(item =>
         item.filename.toLowerCase().includes(query) ||
         item.title.toLowerCase().includes(query) ||
         item.subtitle.toLowerCase().includes(query)
       );
 
-      resultCount.textContent = `Showing ${filtered.length} presentation${filtered.length === 1 ? '' : 's'}`;
+      resultCount.textContent = `Showing ${filtered.length} Presentation${filtered.length === 1 ? '' : 's'}`;
 
       if (filtered.length === 0) {
         emptyState.classList.remove('hidden');
@@ -336,35 +313,40 @@
       emptyState.classList.add('hidden');
 
       filtered.forEach(item => {
-        const previewImage = item.thumbUrl || generateCanvasThumbnail(item);
+        const previewSrc = item.thumbnailBlobUrl || generateCanvasPreview(item);
         const card = document.createElement('div');
         card.className = 'glass-card rounded-3xl overflow-hidden flex flex-col justify-between shadow-xl';
 
         card.innerHTML = `
           <div>
-            <!-- Slide 1 Preview Container -->
-            <div class="slide-box bg-slate-900 relative group">
-              <img src="${previewImage}" alt="Slide 1 Preview" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
-              <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-xl text-yellow-300 border border-white/10 tracking-wider">
-                FIRST PAGE
+            <!-- First Page Thumbnail Preview -->
+            <div class="slide-preview-box relative group">
+              <img src="${previewSrc}" alt="${item.filename} Slide 1" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
+              <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-xl text-yellow-400 border border-white/10 tracking-wider">
+                SLIDE 1 PREVIEW
               </div>
-              <div class="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md text-[11px] px-2.5 py-1 rounded-xl text-slate-200 font-mono">
+              <div class="absolute bottom-3 right-3 bg-slate-950/80 backdrop-blur-md text-[11px] px-2.5 py-1 rounded-xl text-slate-300 font-mono">
                 ${item.fileSize}
               </div>
             </div>
 
-            <!-- Content Details -->
+            <!-- Card Info -->
             <div class="p-5 sm:p-6">
-              <div class="flex items-center gap-2 text-xs font-mono text-yellow-400 mb-2">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                <span class="truncate">${item.filename}</span>
+              <div class="flex items-center justify-between text-xs font-mono text-yellow-400 mb-2">
+                <span class="flex items-center gap-1.5 truncate">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  ${item.filename}
+                </span>
+                <span class="${item.isSuccess ? 'text-emerald-400' : 'text-amber-400'} text-[11px]">
+                  ${item.isSuccess ? '● Ready' : '● Missing File'}
+                </span>
               </div>
               <h2 class="text-base sm:text-lg font-bold text-white leading-snug mb-1.5 line-clamp-1">${item.title}</h2>
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${item.subtitle}</p>
             </div>
           </div>
 
-          <!-- Download Action Button -->
+          <!-- Download Action -->
           <div class="px-5 pb-5 sm:px-6 sm:pb-6 pt-0">
             <a
               href="${item.fileUrl}"
@@ -383,7 +365,7 @@
       lucide.createIcons();
     }
 
-    // Search Input Event Listeners
+    // Search Filtering
     searchInput.addEventListener('input', (e) => {
       const val = e.target.value;
       clearBtn.classList.toggle('hidden', val.length === 0);
@@ -396,9 +378,9 @@
       renderCards('');
     });
 
-    // Initialize Execution
+    // Run on startup
     lucide.createIcons();
-    scanRepoRoot();
+    initSync();
   </script>
 </body>
 </html>
